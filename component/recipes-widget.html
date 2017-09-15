@@ -1,0 +1,112 @@
+<link rel="import" href="../abstract/recipes.html">
+<dom-module id="recipes-widget">
+    <template>
+        <recipes api-base-url="{{apiBaseUrl}}" on-response="setArticles" recipes="{{recipes}}"></recipes>
+        <figure class="recipes" hidden$="{{!isVisible}}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="recipes-slider">
+                            <div class="slick-slider">
+                                <template is="dom-repeat" items="{{recipes}}">
+                                    <h1>{{item.title}}</h1>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </figure>
+    </template>
+    <script>
+        Polymer({
+            is: 'recipes-widget',
+            _$recipesSlider: null,
+            _sliderInitialized: false,
+            _processingRecipes: false,
+            properties: {
+                apiBaseUrl: String,
+                recipes: {
+                    type: Array,
+                    observer: '_onRecipesChange'
+                },
+                isVisible: {
+                    type: Boolean,
+                    value: false
+                },
+            },
+            setRecipes: function(event, recipes) {
+                this.set('recipes', recipes);
+            },
+            _onRecipesChange: function(recipes) {
+                this._setVisibility();
+                this._initSlider(recipes);
+            },
+            _setVisibility: function() {
+                this.set('isVisible', this.recipes && this.recipes.length);
+            },
+            _initSlider: function(recipes) {
+                if (recipes.length < 1 || this._sliderInitialized) {
+                    return;
+                }
+                var self = this;
+                this._sliderInitialized = true;
+                this._processRecipes(recipes);
+                this._setRecipesSlider();
+                this._initializeSliderEventListeners();
+                setTimeout(function() {
+                    if (self._$recipesSlider) {
+                        self._$recipesSlider.slick({
+                            infinite: true,
+                            speed: 400,
+                            slidesToShow: 3,
+                            slidesToScroll: 3,
+                            responsive: [
+                                {
+                                    breakpoint: 1200,
+                                    settings: {
+                                        slidesToShow: 2,
+                                        slidesToScroll: 2
+                                    }
+                                },
+                                {
+                                    breakpoint: 768,
+                                    settings: {
+                                        slidesToShow: 1,
+                                        slidesToScroll: 1,
+                                        fade: true
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                }, 10);
+            },
+            _processRecipes: function(recipes) {
+                if (this._processingRecipes) {
+                    return;
+                }
+                var self = this;
+                this._processingRecipes = true;
+                this.set('recipes', recipes.map(function(recipe) {
+                    return recipe;
+                }));
+                this._processingRecipes = false;
+            },
+            
+            _setRecipesSlider: function() {
+                this._$recipesSlider = $('.recipes-slider .slick-slider');
+            },
+            _initializeSliderEventListeners: function() {
+                var self = this;
+                if (!self._$recipesSlider) {
+                    return;
+                }
+                $(window).on('resize', function() {
+                    self._$productSlider.slick('resize');
+                    self._changeSliderArrows();
+                });
+            }
+        });
+    </script>
+</dom-module>

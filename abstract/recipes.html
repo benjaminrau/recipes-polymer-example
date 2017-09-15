@@ -1,0 +1,30 @@
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<dom-module id="recipes">
+    <template>
+        <iron-ajax auto url="{{apiBaseUrl}}recipes" handle-as="json" on-response="handleResponse" id="xhr"></iron-ajax>
+    </template>
+    <script>
+        Polymer({
+            is: 'recipes',
+            properties: {
+                apiBaseUrl: String,
+                responseCallback: Function,
+                recipes: {
+                    type: Array,
+                    value: [],
+                    observer: '_invokeApiResponseCallback'
+                }
+            },
+            handleResponse: function(data) {
+                if (data) {
+                    this.set('recipes', data);
+                } else {
+                    this.set('recipes', []);
+                }
+            },
+            _invokeApiResponseCallback: function() {
+                this.fire('response', this.recipes);
+            }
+        });
+    </script>
+</dom-module>
