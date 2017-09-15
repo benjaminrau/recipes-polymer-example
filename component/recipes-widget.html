@@ -1,7 +1,7 @@
-<link rel="import" href="../abstract/recipes.html">
+<link rel="import" href="../abstract/recipes-api.html">
 <dom-module id="recipes-widget">
     <template>
-        <recipes api-base-url="{{apiBaseUrl}}" on-response="setArticles" recipes="{{recipes}}"></recipes>
+        <recipes-api api-base-url="{{apiBaseUrl}}" on-response="setRecipes" recipes="{{recipes}}"></recipes-api>
         <figure class="recipes" hidden$="{{!isVisible}}">
             <div class="container">
                 <div class="row">
